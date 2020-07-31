@@ -1,0 +1,62 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Contract
+    network: rinkeby
+    source:
+      address: "0x6b685dd939c18fcebfab9c63d7d13ea11321d835"
+      abi: Contract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - Buy
+        - Sell
+        - CreateCompoundingStream
+        - PayInterest
+        - TakeEarnings
+        - UpdateFee
+        - Paused
+        - Unpaused
+        - PauserAdded
+        - PauserRemoved
+        - OwnershipTransferred
+        - CreateStream
+        - WithdrawFromStream
+        - CancelStream
+      abis:
+        - name: Contract
+          file: ./abis/Contract.json
+      eventHandlers:
+        - event: Buy(indexed uint256,indexed address)
+          handler: handleBuy
+        - event: Sell(indexed uint256,indexed address)
+          handler: handleSell
+        - event: CreateCompoundingStream(indexed uint256,uint256,uint256,uint256)
+          handler: handleCreateCompoundingStream
+        - event: PayInterest(indexed uint256,uint256,uint256,uint256)
+          handler: handlePayInterest
+        - event: TakeEarnings(indexed address,indexed uint256)
+          handler: handleTakeEarnings
+        - event: UpdateFee(indexed uint256)
+          handler: handleUpdateFee
+        - event: Paused(address)
+          handler: handlePaused
+        - event: Unpaused(address)
+          handler: handleUnpaused
+        - event: PauserAdded(indexed address)
+          handler: handlePauserAdded
+        - event: PauserRemoved(indexed address)
+          handler: handlePauserRemoved
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: CreateStream(indexed uint256,indexed address,indexed address,uint256,address,uint256,uint256)
+          handler: handleCreateStream
+        - event: WithdrawFromStream(indexed uint256,indexed address,uint256)
+          handler: handleWithdrawFromStream
+        - event: CancelStream(indexed uint256,indexed address,indexed address,uint256,uint256)
+          handler: handleCancelStream
+      file: ./src/mapping.ts
