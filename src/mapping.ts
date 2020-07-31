@@ -1,94 +1,120 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
-  Contract,
-  Buy,
-  Sell,
-  CreateCompoundingStream,
-  PayInterest,
-  TakeEarnings,
-  UpdateFee,
-  Paused,
-  Unpaused,
-  PauserAdded,
-  PauserRemoved,
-  OwnershipTransferred,
-  CreateStream,
-  WithdrawFromStream,
-  CancelStream
-} from "../generated/Contract/Contract"
-import { ExampleEntity } from "../generated/schema"
+    Contract,
+    Buy,
+    Sell,
+    CreateCompoundingStream,
+    PayInterest,
+    TakeEarnings,
+    UpdateFee,
+    Paused,
+    Unpaused,
+    PauserAdded,
+    PauserRemoved,
+    OwnershipTransferred,
+    CreateStream,
+    WithdrawFromStream,
+    CancelStream
+} from "../generated/Contract/Contract";
+import { File } from "../generated/schema";
 
-export function handleBuy(event: Buy): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+/* address seller; */
+/* address paymentAsset; */
+/* string metadataHash; // unique metadataHash */
+/* uint256 price; */
+/* uint256 numRetrievals; */
+/* mapping(address => bool) buyers; */
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
+/* type File @entity { */
+/* id: ID! */
+/* metadataHash: String! */
+/* seller: User! */
+/* price: BigInt! */
+/* priceAsset: Bytes! */
+/* owners: [User!]! */
+/* } */
 
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
-  }
-
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
-
-  // Entity fields can be set based on event parameters
-  entity.fileId = event.params.fileId
-  entity.buyer = event.params.buyer
-
-  // Entities can be written to the store with `.save()`
-  entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.getEarnings(...)
-  // - contract.nextStreamId(...)
-  // - contract.getCompoundingStream(...)
-  // - contract.balanceOf(...)
-  // - contract.fileCount(...)
-  // - contract.isPauser(...)
-  // - contract.Files(...)
-  // - contract.buyerInfo(...)
-  // - contract.paused(...)
-  // - contract.sellerToBuyer(...)
-  // - contract.sell(...)
-  // - contract.cancelStream(...)
-  // - contract.withdrawFromStream(...)
-  // - contract.createCompoundingStream(...)
-  // - contract.getStream(...)
-  // - contract.interestOf(...)
-  // - contract.owner(...)
-  // - contract.isOwner(...)
-  // - contract.buyerToSeller(...)
-  // - contract.isCompoundingStream(...)
-  // - contract.deltaOf(...)
-  // - contract.createStream(...)
-  // - contract.cTokenManager(...)
-  // - contract.buy(...)
-  // - contract.fee(...)
-  // - contract.priceLimit(...)
+export function handleSell(event: Sell): void {
+    let contract = Contract.bind(event.address);
+    let fileId = event.params.fileId;
+    let fileObject = contract.Files(fileId);
+    let file = new File(fileId.toHex());
+    file.metadataHash = fileObject.value2;
+    file.seller = fileObject.value0;
+    file.price = fileObject.value3;
+    file.priceAsset = fileObject.value1;
+    file.save();
 }
 
-export function handleSell(event: Sell): void {}
+export function handleBuy(event: Buy): void {}
+/*   // Entities can be loaded from the store using a string ID; this ID */
+/*   // needs to be unique across all entities of the same type */
+/*   let entity = ExampleEntity.load(event.transaction.from.toHex()) */
+
+/*   // Entities only exist after they have been saved to the store; */
+/*   // `null` checks allow to create entities on demand */
+/*   if (entity == null) { */
+/*     entity = new ExampleEntity(event.transaction.from.toHex()) */
+
+/*     // Entity fields can be set using simple assignments */
+/*     entity.count = BigInt.fromI32(0) */
+/*   } */
+
+/*   // BigInt and BigDecimal math are supported */
+/*   entity.count = entity.count + BigInt.fromI32(1) */
+
+/*   // Entity fields can be set based on event parameters */
+/*   entity.fileId = event.params.fileId */
+/*   entity.buyer = event.params.buyer */
+
+/*   // Entities can be written to the store with `.save()` */
+/*   entity.save() */
+
+/*   // Note: If a handler doesn't require existing field values, it is faster */
+/*   // _not_ to load the entity from the store. Instead, create it fresh with */
+/*   // `new Entity(...)`, set the fields that should be updated and save the */
+/*   // entity back to the store. Fields that were not set or unset remain */
+/*   // unchanged, allowing for partial updates to be applied. */
+
+/*   // It is also possible to access smart contracts from mappings. For */
+/*   // example, the contract that has emitted the event can be connected to */
+/*   // with: */
+/*   // */
+/*   // let contract = Contract.bind(event.address) */
+/*   // */
+/*   // The following functions can then be called on this contract to access */
+/*   // state variables and other data: */
+/*   // */
+/*   // - contract.getEarnings(...) */
+/*   // - contract.nextStreamId(...) */
+/*   // - contract.getCompoundingStream(...) */
+/*   // - contract.balanceOf(...) */
+/*   // - contract.fileCount(...) */
+/*   // - contract.isPauser(...) */
+/*   // - contract.Files(...) */
+/*   // - contract.buyerInfo(...) */
+/*   // - contract.paused(...) */
+/*   // - contract.sellerToBuyer(...) */
+/*   // - contract.sell(...) */
+/*   // - contract.cancelStream(...) */
+/*   // - contract.withdrawFromStream(...) */
+/*   // - contract.createCompoundingStream(...) */
+/*   // - contract.getStream(...) */
+/*   // - contract.interestOf(...) */
+/*   // - contract.owner(...) */
+/*   // - contract.isOwner(...) */
+/*   // - contract.buyerToSeller(...) */
+/*   // - contract.isCompoundingStream(...) */
+/*   // - contract.deltaOf(...) */
+/*   // - contract.createStream(...) */
+/*   // - contract.cTokenManager(...) */
+/*   // - contract.buy(...) */
+/*   // - contract.fee(...) */
+/*   // - contract.priceLimit(...) */
+/* } */
 
 export function handleCreateCompoundingStream(
-  event: CreateCompoundingStream
+    event: CreateCompoundingStream
 ): void {}
 
 export function handlePayInterest(event: PayInterest): void {}

@@ -1,6 +1,30 @@
-type ExampleEntity @entity {
+type User @entity {
   id: ID!
-  count: BigInt!
-  fileId: BigInt! # uint256
-  buyer: Bytes! # address
+  address: Bytes!
+  filesBought: File!
+  filesSold: File!
+  # subscribers: [User!]! //users who are subscribed to me
+  # subscriptions: [Subscription!]! //all subsciptions I habe subscribed to
 }
+
+type File @entity {
+  id: ID!
+  metadataHash: String!
+  seller: Bytes!
+  price: BigInt!
+  priceAsset: Bytes!
+  # owners: [User!]!
+}
+
+#  type Subscription @entity {
+#    id: ID!
+#    subscriber: User!
+#    seller: User!
+#    duration: BigInt!
+#    startTime: BigInt!
+#    stopTime: BigInt!
+#    isActive: Boolean!
+#    amount: BigInt!
+#    paymentRate: BigInt!
+#    balance: BigInt!
+#  }

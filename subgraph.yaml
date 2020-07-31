@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
@@ -6,11 +6,11 @@ dataSources:
     name: Contract
     network: rinkeby
     source:
-      address: "0x6b685dd939c18fcebfab9c63d7d13ea11321d835"
+      address: "0xCfEB869F69431e42cdB54A4F4f105C19C080A601"
       abi: Contract
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.2
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Buy
