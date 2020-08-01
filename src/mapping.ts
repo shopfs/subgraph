@@ -16,33 +16,34 @@ import {
     WithdrawFromStream,
     CancelStream
 } from "../generated/Contract/Contract";
-import { File } from "../generated/schema";
-
-/* address seller; */
-/* address paymentAsset; */
-/* string metadataHash; // unique metadataHash */
-/* uint256 price; */
-/* uint256 numRetrievals; */
-/* mapping(address => bool) buyers; */
-
-/* type File @entity { */
-/* id: ID! */
-/* metadataHash: String! */
-/* seller: User! */
-/* price: BigInt! */
-/* priceAsset: Bytes! */
-/* owners: [User!]! */
-/* } */
+import { FileEntity, UserEntity } from "../generated/schema";
 
 export function handleSell(event: Sell): void {
     let contract = Contract.bind(event.address);
     let fileId = event.params.fileId;
     let fileObject = contract.Files(fileId);
-    let file = new File(fileId.toHex());
+
+    let file = new FileEntity(fileId.toHex());
     file.metadataHash = fileObject.value2;
-    file.seller = fileObject.value0;
+
+    let user = UserEntity.load(fileObject.value0.toHex());
+    if (user == null) {
+        user = new UserEntity(fileObject.value0.toHex());
+        user.address = fileObject.value0;
+        user.filesBought = new Array<string>();
+        user.filesOwned = new Array<string>();
+        user.subscribers = new Array<string>();
+        user.subscriptions = new Array<string>();
+    }
+    let ownedFiles = user.filesOwned;
+    ownedFiles.push(file.id);
+    user.filesOwned = ownedFiles;
+    user.save();
+
+    file.seller = user.id;
     file.price = fileObject.value3;
     file.priceAsset = fileObject.value1;
+    file.buyers = new Array<string>();
     file.save();
 }
 

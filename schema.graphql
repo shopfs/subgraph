@@ -1,30 +1,30 @@
-type User @entity {
+type UserEntity @entity {
   id: ID!
   address: Bytes!
-  filesBought: File!
-  filesSold: File!
-  # subscribers: [User!]! //users who are subscribed to me
-  # subscriptions: [Subscription!]! //all subsciptions I habe subscribed to
+  filesBought: [FileEntity!]!
+  filesOwned: [FileEntity!]!
+  subscribers: [UserEntity!]!
+  subscriptions: [SubscriptionEntity!]!
 }
 
-type File @entity {
+type FileEntity @entity {
   id: ID!
   metadataHash: String!
-  seller: Bytes!
+  seller: UserEntity!
   price: BigInt!
   priceAsset: Bytes!
-  # owners: [User!]!
+  buyers: [UserEntity!]!
 }
 
-#  type Subscription @entity {
-#    id: ID!
-#    subscriber: User!
-#    seller: User!
-#    duration: BigInt!
-#    startTime: BigInt!
-#    stopTime: BigInt!
-#    isActive: Boolean!
-#    amount: BigInt!
-#    paymentRate: BigInt!
-#    balance: BigInt!
-#  }
+type SubscriptionEntity @entity {
+  id: ID!
+  subscriber: UserEntity!
+  seller: UserEntity!
+  duration: BigInt!
+  startTime: BigInt!
+  stopTime: BigInt!
+  isActive: Boolean!
+  amount: BigInt!
+  paymentRate: BigInt!
+  balance: BigInt!
+}
