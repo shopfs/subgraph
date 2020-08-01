@@ -14,6 +14,7 @@ type FileEntity @entity {
   price: BigInt!
   priceAsset: Bytes!
   buyers: [UserEntity!]!
+  numBuys: BigInt!
 }
 
 type SubscriptionEntity @entity {
