@@ -16,7 +16,11 @@ import {
     WithdrawFromStream,
     CancelStream
 } from "../generated/Contract/Contract";
-import { FileEntity, UserEntity, SubscriptionEntity } from "../generated/schema";
+import {
+    FileEntity,
+    UserEntity,
+    SubscriptionEntity
+} from "../generated/schema";
 
 export function handleSell(event: Sell): void {
     let contract = Contract.bind(event.address);
@@ -78,107 +82,86 @@ export function handleBuy(event: Buy): void {
     file.save();
 }
 
-//    uint256 indexed streamId,
-//         address indexed sender,
-//         address indexed recipient,
-//         uint256 deposit,
-//         address tokenAddress,
-//         uint256 startTime,
-//         uint256 stopTime
-
-
 export function handleCreateStream(event: CreateStream): void {
- let contract = Contract.bind(event.address);
- 
- let subscription = SubscriptionEntity.load(event.params.streamId.toHex());
-  
- let buyerInstance = UserEntity.load(event.params.sender.toHex());
- 
- subscription.subscriber = buyerInstance.id
- 
- let sellerInstance = UserEntity.load(event.params.recipient.toHex());
+    let contract = Contract.bind(event.address);
 
- sellerInstance.subscribers = new Array<string>();
+    let subscription = SubscriptionEntity.load(event.params.streamId.toHex());
+    if (subscription == null) {
+        subscription = new SubscriptionEntity(event.params.streamId.toHex());
+    }
 
- sellerInstance.subscribers.push(buyerInstance.id);
- 
- buyerInstance.subscriptions = new Array<string>();
- 
- buyerInstance.subscriptions.push(subscription.id)
+    let buyerInstance = UserEntity.load(event.params.sender.toHex());
+    if (buyerInstance == null) {
+        buyerInstance = new UserEntity(event.params.sender.toHex());
+        buyerInstance.address = event.params.sender;
+        buyerInstance.filesBought = new Array<string>();
+        buyerInstance.filesOwned = new Array<string>();
+        buyerInstance.subscribers = new Array<string>();
+        buyerInstance.subscriptions = new Array<string>();
+    }
 
- subscription.seller = sellerInstance.id
- 
- subscription.startTime = event.params.startTime;
- 
- subscription.stopTime = event.params.stopTime;
- 
- subscription.duration = event.params.stopTime.minus(event.params.startTime);
- 
- subscription.isActive = contract.isValid(event.params.streamId);
- 
- subscription.amount = event.params.deposit;
- 
- subscription.paymentRate = event.params.deposit.div(event.params.stopTime.minus(event.params.startTime));
- 
- subscription.balance = event.params.deposit;
- 
- subscription.save()
+    let sellerInstance = UserEntity.load(event.params.recipient.toHex());
+    if (sellerInstance == null) {
+        sellerInstance = new UserEntity(event.params.recipient.toHex());
+        sellerInstance.address = event.params.recipient;
+        sellerInstance.filesBought = new Array<string>();
+        sellerInstance.filesOwned = new Array<string>();
+        sellerInstance.subscribers = new Array<string>();
+        sellerInstance.subscriptions = new Array<string>();
+    }
 
- buyerInstance.save()
+    subscription.subscriber = buyerInstance.id;
+    subscription.seller = sellerInstance.id;
+    subscription.startTime = event.params.startTime;
+    subscription.stopTime = event.params.stopTime;
+    subscription.duration = event.params.stopTime.minus(event.params.startTime);
+    subscription.isActive = contract.isValid(event.params.streamId);
+    subscription.amount = event.params.deposit;
+    subscription.tokenAddress = event.params.tokenAddress;
+    subscription.paymentRate = event.params.deposit.div(
+        event.params.stopTime.minus(event.params.startTime)
+    );
+    subscription.balance = event.params.deposit;
+    subscription.save();
 
- sellerInstance.save()
+    let sellerSubscribers = sellerInstance.subscribers;
+    sellerSubscribers.push(buyerInstance.id);
+    sellerInstance.subscribers = sellerSubscribers;
+    sellerInstance.save();
 
+    let buyerSubscriptions = buyerInstance.subscriptions;
+    buyerSubscriptions.push(subscription.id);
+    buyerInstance.subscriptions = buyerSubscriptions;
+    buyerInstance.save();
 }
 
-
 export function handleWithdrawFromStream(event: WithdrawFromStream): void {
- let contract = Contract.bind(event.address);
- 
- let subscription = SubscriptionEntity.load(event.params.streamId.toHex());
- 
- subscription.balance = subscription.balance.minus(event.params.amount)
-
- subscription.amount = event.params.amount;
-  
- subscription.save()
+    let subscription = SubscriptionEntity.load(event.params.streamId.toHex());
+    subscription.balance = subscription.balance.minus(event.params.amount);
+    subscription.amount = event.params.amount;
+    subscription.save();
 }
 
 export function handleCancelStream(event: CancelStream): void {
- let contract = Contract.bind(event.address);
- 
- let subscription = SubscriptionEntity.load(event.params.streamId.toHex());
- 
- subscription.balance = BigInt.fromI32(0);
+    let subscription = SubscriptionEntity.load(event.params.streamId.toHex());
+    subscription.balance = BigInt.fromI32(0);
+    subscription.isActive = false;
+    subscription.save();
 
- subscription.isActive = false;
+    let buyerInstance = UserEntity.load(event.params.sender.toHex());
+    let subscriptions = buyerInstance.subscriptions;
+    let subscriptionIndex = subscriptions.indexOf(subscription.id);
+    subscriptions.splice(subscriptionIndex, 1);
+    buyerInstance.subscriptions = subscriptions;
+    buyerInstance.save();
 
- let buyerInstance = UserEntity.load(event.params.sender.toHex());
-
- let sellerInstance = UserEntity.load(event.params.recipient.toHex());
-
- // assigning here since assembly ts gives compile issue
- let subscriptions = buyerInstance.subscriptions
-
- let subscribers = sellerInstance.subscribers
- 
- let subscriptionIndex = subscriptions.indexOf(subscription.id)
-
- let subscriberIndex = subscribers.indexOf(buyerInstance.id)
-
- buyerInstance.subscriptions.splice(subscriptionIndex, 1)
-
- sellerInstance.subscribers.splice(subscriberIndex, 1)
-   
- subscription.save();
-
- buyerInstance.save();
-
- sellerInstance.save();
+    let sellerInstance = UserEntity.load(event.params.recipient.toHex());
+    let subscribers = sellerInstance.subscribers;
+    let subscriberIndex = subscribers.indexOf(buyerInstance.id);
+    subscribers.splice(subscriberIndex, 1);
+    sellerInstance.subscribers = subscribers;
+    sellerInstance.save();
 }
-
-
-
-
 
 export function handleCreateCompoundingStream(
     event: CreateCompoundingStream
