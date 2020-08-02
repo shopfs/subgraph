@@ -3,60 +3,34 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Contract
+    name: StorageMarketPlace
     network: rinkeby
     source:
-      address: "0x342FFb1030A7F04676f289A5Fb8C6a095934b5A5"
-      abi: Contract
+      address: "0xCfEB869F69431e42cdB54A4F4f105C19C080A601"
+      abi: StorageMarketPlace
+      startBlock: 0
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - Buy
-        - Sell
-        - CreateCompoundingStream
-        - PayInterest
-        - TakeEarnings
-        - UpdateFee
-        - Paused
-        - Unpaused
-        - PauserAdded
-        - PauserRemoved
-        - OwnershipTransferred
-        - CreateStream
-        - WithdrawFromStream
-        - CancelStream
+        - User
+        - File
+        - Subscription
       abis:
-        - name: Contract
-          file: ./abis/Contract.json
+        - name: StorageMarketPlace
+          file: ./abis/StorageMarketPlace.json
       eventHandlers:
         - event: Buy(indexed uint256,indexed address)
           handler: handleBuy
         - event: Sell(indexed uint256,indexed address)
           handler: handleSell
-        - event: CreateCompoundingStream(indexed uint256,uint256,uint256,uint256)
-          handler: handleCreateCompoundingStream
-        - event: PayInterest(indexed uint256,uint256,uint256,uint256)
-          handler: handlePayInterest
-        - event: TakeEarnings(indexed address,indexed uint256)
-          handler: handleTakeEarnings
-        - event: UpdateFee(indexed uint256)
-          handler: handleUpdateFee
-        - event: Paused(address)
-          handler: handlePaused
-        - event: Unpaused(address)
-          handler: handleUnpaused
-        - event: PauserAdded(indexed address)
-          handler: handlePauserAdded
-        - event: PauserRemoved(indexed address)
-          handler: handlePauserRemoved
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: CreateStream(indexed uint256,indexed address,indexed address,uint256,address,uint256,uint256)
-          handler: handleCreateStream
-        - event: WithdrawFromStream(indexed uint256,indexed address,uint256)
-          handler: handleWithdrawFromStream
-        - event: CancelStream(indexed uint256,indexed address,indexed address,uint256,uint256)
-          handler: handleCancelStream
+        - event: SubscriptionInfoUpdated(indexed address,indexed bool)
+          handler: handleSubscriptionInfoUpdate
+        - event: SubscriptionCreated(indexed address,indexed address,indexed uint256)
+          handler: handleSubscriptionCreated
+        - event: SubscriptionWithdrawal(indexed address,indexed uint256,uint256)
+          handler: handleSubscriptionWithdrawal
+        - event: SubscriptionCancelled(indexed address,indexed address,indexed uint256)
+          handler: handleSubscriptionCancelled
       file: ./src/mapping.ts
