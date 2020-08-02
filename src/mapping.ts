@@ -143,14 +143,6 @@ export function handleWithdrawFromStream(event: WithdrawFromStream): void {
  subscription.save()
 }
 
-    // event CancelStream(
-    //     uint256 indexed streamId,
-    //     address indexed sender,
-    //     address indexed recipient,
-    //     uint256 senderBalance,
-    //     uint256 recipientBalance
-    // );
-
 export function handleCancelStream(event: CancelStream): void {
  let contract = Contract.bind(event.address);
  
@@ -168,15 +160,14 @@ export function handleCancelStream(event: CancelStream): void {
  let subscriptions = buyerInstance.subscriptions
 
  let subscribers = sellerInstance.subscribers
+ 
+ let subscriptionIndex = subscriptions.indexOf(subscription.id)
 
- // removing the subscribers & the subscriptions from the array in user entity after stream is cancelled
- for (var i = 0; i < buyerInstance.subscriptions.length; i ++) {
-     if (subscriptions[i].includes(subscription.id)) buyerInstance.subscriptions.splice(i, 1)
- }
+ let subscriberIndex = subscribers.indexOf(buyerInstance.id)
 
- for (var j = 0; j < sellerInstance.subscribers.length; j ++) {
-     if (subscribers[j].includes(buyerInstance.id)) sellerInstance.subscribers.splice(j, 1)
- }
+ buyerInstance.subscriptions.splice(subscriptionIndex, 1)
+
+ sellerInstance.subscribers.splice(subscriberIndex, 1)
    
  subscription.save();
 
