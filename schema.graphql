@@ -1,32 +1,36 @@
-type UserEntity @entity {
+type User @entity {
   id: ID!
   address: Bytes!
-  filesBought: [FileEntity!]!
-  filesOwned: [FileEntity!]!
-  subscribers: [UserEntity!]!
-  subscriptions: [SubscriptionEntity!]!
+  filesBought: [File!]!
+  filesOwned: [File!]!
+  subscribers: [User!]!
+  subscriptions: [Stream!]!
+  isEnabled: Boolean!
+  minDurationInDays: BigInt
+  amountPerDay: BigInt
+  tokenAddress: Bytes
 }
 
-type FileEntity @entity {
+type File @entity {
   id: ID!
   metadataHash: String!
-  seller: UserEntity!
+  seller: User!
   price: BigInt!
   priceAsset: Bytes!
-  buyers: [UserEntity!]!
+  buyers: [User!]!
   numBuys: BigInt!
 }
 
-type SubscriptionEntity @entity {
+type Stream @entity {
   id: ID!
-  subscriber: UserEntity!
-  seller: UserEntity!
-  duration: BigInt!
+  subscriber: User!
+  seller: User!
+  durationInSec: BigInt!
   startTime: BigInt!
   stopTime: BigInt!
   isActive: Boolean!
-  amount: BigInt!
+  deposit: BigInt!
   tokenAddress: Bytes!
-  paymentRate: BigInt!
-  balance: BigInt!
+  ratePerSecond: BigInt!
+  remainingBalance: BigInt!
 }
