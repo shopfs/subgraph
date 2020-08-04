@@ -125,7 +125,7 @@ export function handleSubscriptionCreated(event: SubscriptionCreated): void {
     subscription.save();
 
     let sellerSubscribers = sellerInstance.subscribers;
-    sellerSubscribers.push(buyerInstance.id);
+    sellerSubscribers.push(subscription.id);
     sellerInstance.subscribers = sellerSubscribers;
     sellerInstance.save();
 

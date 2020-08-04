@@ -1,13 +1,14 @@
 {
-  "name": "StorageMarket",
+  "name": "market-rinkeby",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ shopfs/StorageMarket",
-    "create-local": "graph create --node http://localhost:8020/ shopfs/StorageMarket",
-    "remove-local": "graph remove --node http://localhost:8020/ shopfs/StorageMarket",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 shopfs/StorageMarket"
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ shopfs/market-rinkeby",
+    "create-local": "graph create --node http://localhost:8020/ shopfs/market-rinkeby",
+    "remove-local": "graph remove --node http://localhost:8020/ shopfs/market-rinkeby",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 shopfs/market-rinkeby",
+    "deploy-prod": "graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ shopfs/market-rinkeby"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.18.0",

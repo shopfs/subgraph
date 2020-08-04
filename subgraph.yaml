@@ -6,9 +6,9 @@ dataSources:
     name: StorageMarketPlace
     network: rinkeby
     source:
-      address: "0xCfEB869F69431e42cdB54A4F4f105C19C080A601"
+      address: "0x7fdee497283233794210f91093ba85ceb90f9066"
       abi: StorageMarketPlace
-      startBlock: 0
+      startBlock: 6947508
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
