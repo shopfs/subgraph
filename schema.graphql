@@ -3,7 +3,7 @@ type User @entity {
   address: Bytes!
   filesBought: [File!]!
   filesOwned: [File!]!
-  subscribers: [User!]!
+  subscribers: [Stream!]!
   subscriptions: [Stream!]!
   isEnabled: Boolean!
   minDurationInDays: BigInt
