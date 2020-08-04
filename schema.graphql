@@ -23,6 +23,7 @@ type File @entity {
 
 type Stream @entity {
   id: ID!
+  streamId: BigInt!
   subscriber: User!
   seller: User!
   durationInSec: BigInt!

@@ -112,6 +112,7 @@ export function handleSubscriptionCreated(event: SubscriptionCreated): void {
     /* uint256 remainingBalance, value6 */
     /* uint256 ratePerSecond value7 */
 
+    subscription.streamId = event.params.streamId;
     subscription.subscriber = buyerInstance.id;
     subscription.seller = sellerInstance.id;
     subscription.deposit = stream.value2;
