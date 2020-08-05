@@ -88,6 +88,7 @@ export function handleSubscriptionCreated(event: SubscriptionCreated): void {
         buyerInstance.filesOwned = new Array<string>();
         buyerInstance.subscribers = new Array<string>();
         buyerInstance.subscriptions = new Array<string>();
+        buyerInstance.isEnabled = false;
     }
 
     let sellerInstance = User.load(event.params.seller.toHex());
@@ -98,6 +99,7 @@ export function handleSubscriptionCreated(event: SubscriptionCreated): void {
         sellerInstance.filesOwned = new Array<string>();
         sellerInstance.subscribers = new Array<string>();
         sellerInstance.subscriptions = new Array<string>();
+        sellerInstance.isEnabled = false;
     }
 
     let stream = contract.getStream(event.params.streamId);
