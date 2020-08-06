@@ -8,7 +8,7 @@ dataSources:
     source:
       address: "0x79520Adff8E9c61401b4A8F930FA9dE2f2A7d6fD"
       abi: StorageMarketPlace
-      startBlock: 6947508
+      startBlock: 6970588
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
